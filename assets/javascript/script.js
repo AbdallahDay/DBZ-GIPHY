@@ -2,7 +2,8 @@ var characterArray = ["goku", "vegeta", "krillin", "bulma", "piccolo", "yamcha",
 const HOST = "api.giphy.com";
 const PATH = "/v1/gifs/search";
 const API_KEY = "5HJDnOlNRKonpjwua5UfJ6JTRXYXkKVP";
-const RESULT_LIMIT = 10;
+var searchTerm = "";
+var loadLimit =10;
 
 function displayResults(giphyData) {
     //clear images displayed from previous search
@@ -47,7 +48,17 @@ function displayResults(giphyData) {
         //wrap in a div
         var newDiv = $("<div>").addClass("col-12 col-sm-6 col-md-4 col-lg-3").append(img, rating);
         $("#images").append(newDiv);
+
+        $("#showMore").show();
     }
+}
+
+function LoadImages() {
+    var q = `https://${HOST}${PATH}?api_key=${API_KEY}&q=dbz ${searchTerm}&limit=${loadLimit}`;
+    $.ajax({
+        url: q,
+        method: "GET"
+    }).then(displayResults);
 }
 
 function recreateButtons() {
@@ -60,12 +71,9 @@ function recreateButtons() {
         btn.text(name);
 
         btn.on("click", function() {
-            const name = $(this).data("name");
-            var q = `https://${HOST}${PATH}?api_key=${API_KEY}&q=dbz ${name}&limit=${RESULT_LIMIT}`;
-            $.ajax({
-                url: q,
-                method: "GET"
-            }).then(displayResults);
+            loadLimit = 10;
+            searchTerm = $(this).data("name");
+            LoadImages();
         });
 
         $("#character-buttons").append(btn);
@@ -83,5 +91,10 @@ $(document).ready(function() {
             characterArray.push(term);
             recreateButtons();
         }
+    });
+
+    $("#showMore").on("click", function() {
+        loadLimit += 10;
+        LoadImages();
     });
 });

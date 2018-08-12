@@ -9,3 +9,7 @@
 .result-gif {
     width: 100%;
 }
+
+#showMore {
+    display: none;
+}
